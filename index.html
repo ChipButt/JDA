@@ -21,7 +21,9 @@
       </div>
       <button id="backup-button" class="icon-button" type="button" aria-label="Data tools" title="Data tools">•••</button>
     </header>
+
     <main id="app" class="content" aria-live="polite"></main>
+
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" data-view="home" type="button"><span class="nav-icon">⌂</span><span>Today</span></button>
       <button class="nav-item" data-view="dogs" type="button"><span class="nav-icon">●</span><span>Dogs</span></button>
@@ -29,26 +31,132 @@
       <button class="nav-item" data-view="sitting" type="button"><span class="nav-icon">⌂</span><span>Sitting</span></button>
     </nav>
   </div>
+
   <button id="fab" class="fab" type="button" aria-label="Add dog">＋</button>
+
   <dialog id="dog-dialog" class="sheet-dialog">
     <form id="dog-form" method="dialog" novalidate>
-      <div class="sheet-head"><div><p class="eyebrow">DOG PROFILE</p><h2 id="dog-form-title">Add dog</h2></div><button class="close-button" value="cancel" type="submit" aria-label="Close">×</button></div>
-      <input id="dog-id" type="hidden" /><input id="photo-data" type="hidden" />
-      <label class="photo-picker" for="photo-input"><img id="photo-preview" alt="" hidden /><span id="photo-placeholder" class="photo-placeholder">Add photo</span><input id="photo-input" type="file" accept="image/*" capture="environment" /></label>
-      <div class="form-grid two"><label><span>Name *</span><input id="name" required maxlength="60" autocomplete="off" /></label><label><span>Breed</span><input id="breed" maxlength="80" autocomplete="off" /></label></div>
-      <div class="form-grid two"><label><span>Dog age</span><input id="age" maxlength="40" placeholder="e.g. 4 years" /></label><label><span>Owner's name</span><input id="owner" maxlength="80" /></label></div>
-      <label><span>Address</span><textarea id="address" rows="2" autocomplete="street-address"></textarea></label>
-      <fieldset><legend>Key to premises?</legend><div class="segmented"><label><input type="radio" name="has-key" value="yes" /><span>Yes</span></label><label><input type="radio" name="has-key" value="no" checked /><span>No</span></label></div></fieldset>
+      <div class="sheet-head">
+        <div><p class="eyebrow">DOG PROFILE</p><h2 id="dog-form-title">Add dog</h2></div>
+        <button class="close-button" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+
+      <input id="dog-id" type="hidden" />
+      <input id="photo-data" type="hidden" />
+
+      <section class="photo-section" aria-label="Dog photo">
+        <div class="photo-preview-box">
+          <img id="photo-preview" alt="Dog photo preview" hidden />
+          <span id="photo-placeholder" class="photo-placeholder">No photo</span>
+        </div>
+        <div class="photo-actions">
+          <button id="take-photo-button" class="primary-button" type="button">Take photo</button>
+          <button id="choose-photo-button" class="secondary-button" type="button">Choose photo</button>
+        </div>
+        <input id="camera-input" class="hidden-file" type="file" accept="image/*" capture="environment" />
+        <input id="photo-input" class="hidden-file" type="file" accept="image/*" />
+      </section>
+
+      <div class="form-grid two">
+        <label><span>Name *</span><input id="name" required maxlength="60" autocomplete="off" /></label>
+        <label><span>Breed</span><input id="breed" maxlength="80" autocomplete="off" /></label>
+      </div>
+      <div class="form-grid two">
+        <label><span>Dog age</span><input id="age" maxlength="40" placeholder="e.g. 4 years" /></label>
+        <label><span>Owner's name</span><input id="owner" maxlength="80" /></label>
+      </div>
+
+      <fieldset class="address-fieldset">
+        <legend>Address</legend>
+        <label><span>First line</span><input id="address-line1" autocomplete="address-line1" /></label>
+        <div class="form-grid two">
+          <label><span>Town</span><input id="address-town" autocomplete="address-level2" /></label>
+          <label><span>County</span><input id="address-county" autocomplete="address-level1" /></label>
+        </div>
+        <label><span>Postcode</span><input id="address-postcode" class="postcode-input" autocomplete="postal-code" autocapitalize="characters" /></label>
+      </fieldset>
+
+      <label><span>Key to premises / entry instructions</span><textarea id="key-info" rows="3" placeholder="e.g. Key safe beside garage, code 1234; side gate first…"></textarea></label>
       <label><span>Special requirements</span><textarea id="special" rows="3" placeholder="Medication, behaviour, feeding, access notes…"></textarea></label>
       <label><span>Other info</span><textarea id="other" rows="3"></textarea></label>
-      <section class="service-editor"><div class="service-toggle-row"><div><strong>Walking</strong><small>Show this dog in walking schedules</small></div><label class="switch"><input id="walking-enabled" type="checkbox" /><span></span></label></div><div id="walking-editor" class="schedule-editor" hidden><div class="section-title-row"><h3>Walk schedule</h3><button class="text-button" id="add-walk-slot" type="button">+ Add time</button></div><div id="walk-slots"></div></div></section>
-      <section class="service-editor"><div class="service-toggle-row"><div><strong>Sitting</strong><small>Show this dog in sitting schedules</small></div><label class="switch"><input id="sitting-enabled" type="checkbox" /><span></span></label></div><div id="sitting-editor" class="schedule-editor" hidden><div class="section-title-row"><h3>Sitting schedule</h3><button class="text-button" id="add-sit-slot" type="button">+ Add time</button></div><div id="sit-slots"></div></div></section>
-      <div class="dialog-actions"><button id="delete-dog" class="danger-button" type="button" hidden>Delete dog</button><button class="primary-button" id="save-dog" type="button">Save dog</button></div>
+
+      <section class="service-editor">
+        <div class="service-toggle-row">
+          <div><strong>Walking</strong><small>Show this dog in walking schedules and route planning</small></div>
+          <label class="switch"><input id="walking-enabled" type="checkbox" /><span></span></label>
+        </div>
+        <div id="walking-editor" class="schedule-editor" hidden>
+          <div class="section-title-row"><h3>Pickup schedule</h3><button class="text-button" id="add-walk-slot" type="button">+ Add time</button></div>
+          <div id="walk-slots"></div>
+        </div>
+      </section>
+
+      <section class="service-editor">
+        <div class="service-toggle-row">
+          <div><strong>Sitting</strong><small>Show this dog in sitting schedules</small></div>
+          <label class="switch"><input id="sitting-enabled" type="checkbox" /><span></span></label>
+        </div>
+        <div id="sitting-editor" class="schedule-editor" hidden>
+          <div class="section-title-row"><h3>Sitting schedule</h3><button class="text-button" id="add-sit-slot" type="button">+ Add time</button></div>
+          <div id="sit-slots"></div>
+        </div>
+      </section>
+
+      <div class="dialog-actions">
+        <button id="delete-dog" class="danger-button" type="button" hidden>Delete dog</button>
+        <button class="primary-button" id="save-dog" type="button">Save dog</button>
+      </div>
     </form>
   </dialog>
+
+  <dialog id="location-dialog" class="sheet-dialog small-sheet">
+    <form id="location-form" method="dialog" novalidate>
+      <div class="sheet-head">
+        <div><p class="eyebrow">LOCATION</p><h2 id="location-form-title">Add walking location</h2></div>
+        <button class="close-button" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+      <input id="location-id" type="hidden" />
+      <input id="location-mode" type="hidden" />
+      <label id="location-name-label"><span>Location name *</span><input id="location-name" maxlength="80" placeholder="e.g. Oakfield Dog Walking Field" /></label>
+      <fieldset class="address-fieldset">
+        <legend>Address</legend>
+        <label><span>First line</span><input id="location-line1" autocomplete="address-line1" /></label>
+        <div class="form-grid two">
+          <label><span>Town</span><input id="location-town" autocomplete="address-level2" /></label>
+          <label><span>County</span><input id="location-county" autocomplete="address-level1" /></label>
+        </div>
+        <label><span>Postcode *</span><input id="location-postcode" class="postcode-input" autocomplete="postal-code" autocapitalize="characters" /></label>
+      </fieldset>
+      <p class="form-note">The postcode is used for route calculations. Full address details stay on this device until you choose to open the route in Google Maps.</p>
+      <div class="dialog-actions">
+        <button id="delete-location" class="danger-button" type="button" hidden>Delete</button>
+        <button id="save-location" class="primary-button" type="button">Save location</button>
+      </div>
+    </form>
+  </dialog>
+
   <dialog id="detail-dialog" class="sheet-dialog detail-sheet"></dialog>
-  <dialog id="data-dialog" class="sheet-dialog small-sheet"><div class="sheet-head"><div><p class="eyebrow">DATA</p><h2>Backup & restore</h2></div><button class="close-button" type="button" data-close-dialog="data-dialog">×</button></div><p class="muted">Dog information is stored only on this device. Export a backup if you want a copy or need to move it to another phone.</p><div class="stack-actions"><button id="export-data" class="primary-button" type="button">Export backup</button><label class="secondary-button file-button">Restore backup<input id="import-data" type="file" accept="application/json,.json" /></label></div></dialog>
-  <template id="schedule-row-template"><div class="schedule-row"><select class="slot-day" aria-label="Day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select><input class="slot-time" type="time" aria-label="Time" /><button class="remove-slot" type="button" aria-label="Remove time">×</button></div></template>
+
+  <dialog id="data-dialog" class="sheet-dialog small-sheet">
+    <div class="sheet-head">
+      <div><p class="eyebrow">DATA</p><h2>Backup & restore</h2></div>
+      <button class="close-button" type="button" data-close-dialog="data-dialog">×</button>
+    </div>
+    <p class="muted">Dog information, your starting location and walking fields are stored on this device. Export a backup if you want a copy or need to move everything to another phone.</p>
+    <div class="stack-actions">
+      <button id="export-data" class="primary-button" type="button">Export backup</button>
+      <label class="secondary-button file-button">Restore backup<input id="import-data" type="file" accept="application/json,.json" /></label>
+    </div>
+  </dialog>
+
+  <template id="schedule-row-template">
+    <div class="schedule-row">
+      <select class="slot-day" aria-label="Day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
+      <input class="slot-time" type="time" aria-label="Time" />
+      <button class="remove-slot" type="button" aria-label="Remove time">×</button>
+    </div>
+  </template>
+
   <script src="app.js"></script>
 </body>
 </html>
