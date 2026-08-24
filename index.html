@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f6efe5" />
+  <meta name="theme-color" content="#fff6ee" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Jess' Dogs" />
@@ -19,16 +19,22 @@
         <p class="eyebrow">JESS' DOG ORGANISER</p>
         <h1 id="page-title">Today</h1>
       </div>
-      <button id="backup-button" class="icon-button" type="button" aria-label="Data tools" title="Data tools">•••</button>
+      <button id="backup-button" class="icon-button" type="button" aria-label="Data tools" title="Data tools">⋯</button>
     </header>
 
-    <main id="app" class="content" aria-live="polite"></main>
+    <main id="app" class="content" aria-live="polite">
+      <section class="loading-state">
+        <div class="spinner"></div>
+        <h2>Getting Jess' dogs ready…</h2>
+        <p>Loading dogs, schedules and walking locations.</p>
+      </section>
+    </main>
 
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" data-view="home" type="button"><span class="nav-icon">⌂</span><span>Today</span></button>
-      <button class="nav-item" data-view="dogs" type="button"><span class="nav-icon">●</span><span>Dogs</span></button>
+      <button class="nav-item" data-view="dogs" type="button"><span class="nav-icon">🐾</span><span>Dogs</span></button>
       <button class="nav-item" data-view="walks" type="button"><span class="nav-icon">↗</span><span>Walks</span></button>
-      <button class="nav-item" data-view="sitting" type="button"><span class="nav-icon">⌂</span><span>Sitting</span></button>
+      <button class="nav-item" data-view="sitting" type="button"><span class="nav-icon">❤</span><span>Sitting</span></button>
     </nav>
   </div>
 
@@ -47,7 +53,7 @@
       <section class="photo-section" aria-label="Dog photo">
         <div class="photo-preview-box">
           <img id="photo-preview" alt="Dog photo preview" hidden />
-          <span id="photo-placeholder" class="photo-placeholder">No photo</span>
+          <span id="photo-placeholder" class="photo-placeholder">No photo yet</span>
         </div>
         <div class="photo-actions">
           <button id="take-photo-button" class="primary-button" type="button">Take photo</button>
@@ -142,7 +148,7 @@
       <div><p class="eyebrow">DATA</p><h2>Backup & restore</h2></div>
       <button class="close-button" type="button" data-close-dialog="data-dialog">×</button>
     </div>
-    <p class="muted">Dog information, your starting location and walking fields are stored on this device. Export a backup if you want a copy or need to move everything to another phone.</p>
+    <p class="muted">This version stores Jess’s data on this device using IndexedDB, which is more suitable for photos and larger records than local browser storage. Export a backup if you want a copy or need to move it to another phone.</p>
     <div class="stack-actions">
       <button id="export-data" class="primary-button" type="button">Export backup</button>
       <label class="secondary-button file-button">Restore backup<input id="import-data" type="file" accept="application/json,.json" /></label>
