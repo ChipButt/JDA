@@ -92,8 +92,13 @@
           <label class="switch"><input id="walking-enabled" type="checkbox" /><span></span></label>
         </div>
         <div id="walking-editor" class="schedule-editor" hidden>
-          <div class="section-title-row"><h3>Pickup schedule</h3><button class="text-button" id="add-walk-slot" type="button">+ Add time</button></div>
+          <div class="section-title-row"><h3>Regular weekly walking</h3><button class="text-button" id="add-walk-slot" type="button">+ Add time</button></div>
           <div id="walk-slots"></div>
+          <div class="one-off-editor">
+            <div class="section-title-row"><h3>One-off walking dates</h3><button class="text-button" id="add-walk-date" type="button">+ Add date</button></div>
+            <p class="form-note">Use this for walks that are not part of the normal weekly schedule.</p>
+            <div id="walk-date-rows"></div>
+          </div>
         </div>
       </section>
 
@@ -156,6 +161,22 @@
 
   <dialog id="detail-dialog" class="sheet-dialog detail-sheet"></dialog>
 
+  <dialog id="walking-booking-dialog" class="sheet-dialog small-sheet">
+    <form id="walking-booking-form" method="dialog" novalidate>
+      <div class="sheet-head">
+        <div><p class="eyebrow">WALKING CALENDAR</p><h2>Add walking date</h2></div>
+        <button class="close-button" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+      <label><span>Dog *</span><select id="walking-booking-dog"></select></label>
+      <div class="form-grid two">
+        <label><span>Date *</span><input id="walking-booking-date" type="date" /></label>
+        <label><span>Pickup time</span><input id="walking-booking-time" type="time" /></label>
+      </div>
+      <p class="form-note">This creates a one-off walk and does not change the dog’s regular weekly walking schedule.</p>
+      <div class="dialog-actions"><button id="save-walking-booking" class="primary-button" type="button">Add to calendar</button></div>
+    </form>
+  </dialog>
+
   <dialog id="sitting-booking-dialog" class="sheet-dialog small-sheet">
     <form id="sitting-booking-form" method="dialog" novalidate>
       <div class="sheet-head">
@@ -192,6 +213,14 @@
     </div>
   </template>
 
+  <template id="walk-date-row-template">
+    <div class="sit-date-row walk-date-row">
+      <input class="walk-date" type="date" aria-label="Walking date" />
+      <input class="walk-date-time" type="time" aria-label="Walking pickup time" />
+      <button class="remove-walk-date" type="button" aria-label="Remove date">×</button>
+    </div>
+  </template>
+
   <template id="sit-date-row-template">
     <div class="sit-date-row">
       <input class="sit-date" type="date" aria-label="Sitting date" />
@@ -201,6 +230,7 @@
   </template>
 
   <script src="app-core.js"></script>
+  <script src="app-walking.js"></script>
   <script src="app-sitting.js"></script>
   <script src="app-route.js"></script>
   <script src="app-ui.js"></script>
