@@ -103,8 +103,21 @@
           <label class="switch"><input id="sitting-enabled" type="checkbox" /><span></span></label>
         </div>
         <div id="sitting-editor" class="schedule-editor" hidden>
-          <div class="section-title-row"><h3>Sitting schedule</h3><button class="text-button" id="add-sit-slot" type="button">+ Add time</button></div>
+          <div class="sitting-preferences">
+            <h3>Sitting preferences</h3>
+            <div class="check-grid">
+              <label class="check-card"><input id="good-with-dogs" type="checkbox" /><span>Good with other dogs</span></label>
+              <label class="check-card"><input id="off-lead" type="checkbox" /><span>Off lead</span></label>
+              <label class="check-card"><input id="allowed-furniture" type="checkbox" /><span>Allowed on furniture</span></label>
+            </div>
+          </div>
+          <div class="section-title-row"><h3>Regular weekly sitting</h3><button class="text-button" id="add-sit-slot" type="button">+ Add time</button></div>
           <div id="sit-slots"></div>
+          <div class="one-off-editor">
+            <div class="section-title-row"><h3>One-off sitting dates</h3><button class="text-button" id="add-sit-date" type="button">+ Add date</button></div>
+            <p class="form-note">Use this for bookings that are not part of the normal weekly schedule.</p>
+            <div id="sit-date-rows"></div>
+          </div>
         </div>
       </section>
 
@@ -143,6 +156,22 @@
 
   <dialog id="detail-dialog" class="sheet-dialog detail-sheet"></dialog>
 
+  <dialog id="sitting-booking-dialog" class="sheet-dialog small-sheet">
+    <form id="sitting-booking-form" method="dialog" novalidate>
+      <div class="sheet-head">
+        <div><p class="eyebrow">SITTING CALENDAR</p><h2>Add sitting date</h2></div>
+        <button class="close-button" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+      <label><span>Dog *</span><select id="booking-dog"></select></label>
+      <div class="form-grid two">
+        <label><span>Date *</span><input id="booking-date" type="date" /></label>
+        <label><span>Time</span><input id="booking-time" type="time" /></label>
+      </div>
+      <p class="form-note">This creates a one-off sitting booking and does not change the dog’s regular weekly schedule.</p>
+      <div class="dialog-actions"><button id="save-sitting-booking" class="primary-button" type="button">Add to calendar</button></div>
+    </form>
+  </dialog>
+
   <dialog id="data-dialog" class="sheet-dialog small-sheet">
     <div class="sheet-head">
       <div><p class="eyebrow">DATA</p><h2>Backup & restore</h2></div>
@@ -160,6 +189,14 @@
       <select class="slot-day" aria-label="Day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
       <input class="slot-time" type="time" aria-label="Time" />
       <button class="remove-slot" type="button" aria-label="Remove time">×</button>
+    </div>
+  </template>
+
+  <template id="sit-date-row-template">
+    <div class="sit-date-row">
+      <input class="sit-date" type="date" aria-label="Sitting date" />
+      <input class="sit-date-time" type="time" aria-label="Sitting time" />
+      <button class="remove-sit-date" type="button" aria-label="Remove date">×</button>
     </div>
   </template>
 
