@@ -1,3 +1,5 @@
+if(!document.querySelector('link[data-jda-icons]')){const iconStyle=document.createElement('link');iconStyle.rel='stylesheet';iconStyle.href='./icons.css';iconStyle.dataset.jdaIcons='true';document.head.append(iconStyle)}
+
 function walkingCalendar(){
   pageTitle.textContent='Walking';
   const y=walkingMonthStart.getFullYear(),m=walkingMonthStart.getMonth();
