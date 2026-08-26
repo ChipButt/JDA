@@ -16,8 +16,10 @@ const dogDlg=$('#dog-dialog');
 const locationDlg=$('#location-dialog');
 const detailDlg=$('#detail-dialog');
 const dataDlg=$('#data-dialog');
+const walkingBookingDlg=$('#walking-booking-dialog');
 const sittingBookingDlg=$('#sitting-booking-dialog');
 const walkSlots=$('#walk-slots');
+const walkDateRows=$('#walk-date-rows');
 const sitSlots=$('#sit-slots');
 const sitDateRows=$('#sit-date-rows');
 const walkOn=$('#walking-enabled');
@@ -32,6 +34,8 @@ let postcodeCache={};
 let view='home';
 let routeDraft=null;
 const now=new Date();
+let walkingMonthStart=new Date(now.getFullYear(),now.getMonth(),1);
+let walkingSelectedDate=localISO(now);
 let sittingMonthStart=new Date(now.getFullYear(),now.getMonth(),1);
 let sittingSelectedDate=localISO(now);
 
@@ -65,6 +69,7 @@ function migrateDog(d={}){
     other:d.other||'',
     walking:!!d.walking,
     walkSchedule:Array.isArray(d.walkSchedule)?d.walkSchedule:[],
+    walkDates:Array.isArray(d.walkDates)?d.walkDates.filter(x=>x&&x.date).map(x=>({id:x.id||uid(),date:x.date,time:x.time||''})):[],
     sitting:!!d.sitting,
     sitSchedule:Array.isArray(d.sitSchedule)?d.sitSchedule:[],
     sitDates:Array.isArray(d.sitDates)?d.sitDates.filter(x=>x&&x.date).map(x=>({id:x.id||uid(),date:x.date,time:x.time||''})):[],
@@ -121,6 +126,22 @@ async function removeDogRecord(id){await dbDelete(DOG_STORE,id);dogs=dogs.filter
 async function saveSettings(){await dbPut(APP_STORE,{key:'settings',value:settings})}
 async function savePostcodeCache(){await dbPut(APP_STORE,{key:'postcodeCache',value:postcodeCache})}
 
+function walkingEntriesForDate(dateISO){
+  const day=dayNameForISO(dateISO);
+  const out=[];
+  for(const d of dogs){
+    if(!d.walking)continue;
+    const seen=new Set();
+    for(const item of (d.walkDates||[]).filter(x=>x.date===dateISO)){
+      const key=item.time||'';seen.add(key);out.push({d,slot:{time:item.time||''},type:'walk',oneOff:true,date:item.date,bookingId:item.id});
+    }
+    for(const slot of (d.walkSchedule||[]).filter(x=>x.day===day)){
+      const key=slot.time||'';if(seen.has(key))continue;out.push({d,slot,type:'walk',oneOff:false,date:dateISO});
+    }
+  }
+  return out.sort((a,b)=>(a.slot.time||'99:99').localeCompare(b.slot.time||'99:99')||a.d.name.localeCompare(b.d.name));
+}
+
 function sittingEntriesForDate(dateISO){
   const day=dayNameForISO(dateISO);
   const out=[];
@@ -138,10 +159,11 @@ function sittingEntriesForDate(dateISO){
 }
 function jobs(type,day=today(),dateISO=localISO()){
   if(type==='sit')return sittingEntriesForDate(dateISO);
-  return dogs.flatMap(d=>d.walking?(d.walkSchedule||[]).filter(x=>x.day===day).map(slot=>({d,slot,type:'walk'})):[]).sort((a,b)=>(a.slot.time||'99:99').localeCompare(b.slot.time||'99:99'));
+  if(type==='walk')return walkingEntriesForDate(dateISO);
+  return [];
 }
 function pickupForDay(d,day){return (d.walkSchedule||[]).find(x=>x.day===day)?.time||''}
 function tags(d){return `${d.walking?'<span class="tag">Walking</span>':''}${d.sitting?'<span class="tag sit">Sitting</span>':''}${d.keyInfo?'<span class="tag key">Entry info</span>':''}`}
 function dogCard(d){return `<button class="dog-card" data-dog="${d.id}">${avatar(d)}<span class="card-main"><strong>${esc(d.name)}</strong><small>${esc([d.breed,d.owner&&`Owner: ${d.owner}`].filter(Boolean).join(' · ')||'No extra details yet')}</small><span class="tag-row">${tags(d)}</span></span><span class="card-chevron">›</span></button>`}
-function jobCard(x){const label=x.type==='walk'?'Walk':x.oneOff?'One-off sitting':'Sitting';return `<button class="job-card" data-dog="${x.d.id}">${avatar(x.d)}<span class="card-main"><strong>${esc(x.d.name)}</strong><small>${label}${hasAddress(x.d)?' · '+esc(firstAddressLine(x.d)||postcodeOf(x.d)):''}</small></span><strong>${esc(x.slot.time||'Any time')}</strong></button>`}
+function jobCard(x){const label=x.type==='walk'?(x.oneOff?'One-off walk':'Walk'):(x.oneOff?'One-off sitting':'Sitting');return `<button class="job-card" data-dog="${x.d.id}">${avatar(x.d)}<span class="card-main"><strong>${esc(x.d.name)}</strong><small>${label}${hasAddress(x.d)?' · '+esc(firstAddressLine(x.d)||postcodeOf(x.d)):''}</small></span><strong>${esc(x.slot.time||'Any time')}</strong></button>`}
 function empty(h,p,b='Add a dog'){return `<div class="empty-state"><div class="empty-icon">🐾</div><h3>${esc(h)}</h3><p>${esc(p)}</p><button class="primary-button" data-add>${esc(b)}</button></div>`}
