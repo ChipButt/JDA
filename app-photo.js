@@ -1,4 +1,4 @@
-const DOG_PLACEHOLDER='./assets/dog-placeholder.svg';
+const DOG_PLACEHOLDER='./assets/dog-placeholder.jpg';
 
 function avatar(d){
   const hasPhoto=!!d?.photo;
